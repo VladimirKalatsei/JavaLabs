@@ -2,7 +2,8 @@ package com.example.lab001.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Detection {
+public class Detection
+{
     @JsonProperty("language")
     private String language;
 
