@@ -4,9 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LanguageDetectionApplication {
+public class Lab001Application
+{
 
     public static void main(String[] args) {
-        SpringApplication.run(LanguageDetectionApplication.class, args);
+        SpringApplication.run(Lab001Application.class, args);
     }
 }
