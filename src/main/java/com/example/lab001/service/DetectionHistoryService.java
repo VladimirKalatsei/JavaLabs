@@ -37,6 +37,10 @@ public class DetectionHistoryService {
         detectionHistoryRepository.deleteById(id);
     }
 
+    public List<DetectionHistory> findByEmail(String email) {
+        return detectionHistoryRepository.findByEmail(email);
+    }
+
     public List<DetectionHistory> findByUsername(String username) {
         // Проверяем кэш
         List<DetectionHistory> cachedHistories = detectionHistoryCache.get(username);

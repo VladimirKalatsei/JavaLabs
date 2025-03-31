@@ -62,4 +62,13 @@ public class DetectionHistoryController {
                 .map(DetectionHistoryDTO::new)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/user/email")
+    public List<DetectionHistoryDTO> getHistoriesByEmail(@RequestParam String email) {
+        List<DetectionHistory> histories = detectionHistoryService.findByEmail(email);
+        return histories.stream()
+                .map(DetectionHistoryDTO::new)
+                .collect(Collectors.toList());
+    }
+
 }
