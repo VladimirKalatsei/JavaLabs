@@ -18,4 +18,8 @@ public class DetectionHistoryCache {
     public void put(String username, List<DetectionHistory> histories) {
         cache.put(username, histories);
     }
+
+    public void remove(String username) {
+        cache.remove(username);
+    }
 }

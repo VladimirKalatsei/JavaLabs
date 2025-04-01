@@ -71,4 +71,10 @@ public class DetectionHistoryController {
                 .collect(Collectors.toList());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<DetectionHistory> updateDetectionHistory(@PathVariable Long id, @RequestBody DetectionHistory detectionHistory) {
+        DetectionHistory updatedHistory = detectionHistoryService.update(id, detectionHistory);
+        return ResponseEntity.ok(updatedHistory);
+    }
+
 }

@@ -34,9 +34,12 @@ public class DetectionHistoryService {
 
     @Transactional
     public void delete(Long id) {
-        detectionHistoryRepository.deleteById(id);
+        DetectionHistory history = findById(id);
+        if (history != null) {
+            detectionHistoryRepository.deleteById(id);
+            detectionHistoryCache.remove(history.getUser().getUsername()); // Очистка кэша
+        }
     }
-
     public List<DetectionHistory> findByEmail(String email) {
         return detectionHistoryRepository.findByEmail(email);
     }
@@ -54,4 +57,14 @@ public class DetectionHistoryService {
         detectionHistoryCache.put(username, histories);
         return histories;
     }
+
+    @Transactional
+    public DetectionHistory update(Long id, DetectionHistory detectionHistory) {
+        detectionHistory.setId(id);
+        DetectionHistory updatedHistory = detectionHistoryRepository.save(detectionHistory);
+        detectionHistoryCache.remove(detectionHistory.getUser().getUsername()); // Очистка кэша
+        return updatedHistory;
+    }
+
+
 }

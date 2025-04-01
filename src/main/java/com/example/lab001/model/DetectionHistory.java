@@ -3,6 +3,7 @@ package com.example.lab001.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,6 +23,7 @@ public class DetectionHistory {
     @Column(nullable = false)
     private String detectedLanguage;
 
+    // Убедитесь, что это поле инициализируется при создании объекта
     @Column(nullable = false)
     private LocalDateTime detectionTime;
 
@@ -29,4 +31,10 @@ public class DetectionHistory {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    // Метод для установки значения detectionTime на текущее время
+    @PrePersist
+    public void onCreate() {
+        this.detectionTime = LocalDateTime.now();
+    }
 }
