@@ -21,7 +21,6 @@ public class DetectionHistoryService {
         if (cachedHistories != null) {
             return cachedHistories;
         }
-
         List<DetectionHistory> histories = detectionHistoryRepository.findAll();
         detectionHistoryCache.putAllHistories(histories);
         return histories;
@@ -32,7 +31,6 @@ public class DetectionHistoryService {
         if (cachedHistory != null) {
             return cachedHistory;
         }
-
         DetectionHistory history = detectionHistoryRepository.findById(id).orElse(null);
         if (history != null) {
             detectionHistoryCache.putById(id, history);
@@ -45,7 +43,6 @@ public class DetectionHistoryService {
         if (cachedHistories != null) {
             return cachedHistories;
         }
-
         List<DetectionHistory> histories = detectionHistoryRepository.findByUserId(userId);
         detectionHistoryCache.putByUserId(userId, histories);
         return histories;
@@ -56,7 +53,6 @@ public class DetectionHistoryService {
         if (cachedHistories != null) {
             return cachedHistories;
         }
-
         List<DetectionHistory> histories = detectionHistoryRepository.findByEmail(email);
         detectionHistoryCache.putByEmail(email, histories);
         return histories;
@@ -67,7 +63,6 @@ public class DetectionHistoryService {
         if (cachedHistories != null) {
             return cachedHistories;
         }
-
         List<DetectionHistory> histories = detectionHistoryRepository.findByUsername(username);
         detectionHistoryCache.putByUsername(username, histories);
         return histories;

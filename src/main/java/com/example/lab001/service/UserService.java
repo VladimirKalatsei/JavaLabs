@@ -1,6 +1,5 @@
 package com.example.lab001.service;
 
-import com.example.lab001.cache.UserCache;
 import com.example.lab001.model.User;
 import com.example.lab001.repository.UserRepository;
 import com.example.lab001.exception.ResourceAlreadyExistsException;
@@ -9,48 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final UserCache userCache;
 
     public List<User> findAll() {
-        List<User> cachedUsers = userCache.getAllUsers();
-        if (cachedUsers != null) {
-            return cachedUsers;
-        }
-
-        List<User> users = userRepository.findAll();
-        userCache.putAllUsers(users);
-        return users;
+        return userRepository.findAll();
     }
 
     public User findById(Long id) {
-        User cachedUser = userCache.getById(id);
-        if (cachedUser != null) {
-            return cachedUser;
-        }
-
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            userCache.putById(id, user);
-        }
-        return user;
+        return userRepository.findById(id).orElse(null);
     }
 
     public User findByEmail(String email) {
-        User cachedUser = userCache.getByEmail(email);
-        if (cachedUser != null) {
-            return cachedUser;
-        }
-
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            userCache.putByEmail(email, user);
-        }
-        return user;
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Transactional
@@ -58,22 +32,17 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ResourceAlreadyExistsException("User with email " + user.getEmail() + " already exists");
         }
-        User createdUser = userRepository.save(user);
-        userCache.clear();
-        return createdUser;
+        return userRepository.save(user);
     }
 
     @Transactional
     public User update(Long id, User user) {
         user.setId(id);
-        User updatedUser = userRepository.save(user);
-        userCache.clear();
-        return updatedUser;
+        return userRepository.save(user);
     }
 
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
-        userCache.clear();
     }
 }
