@@ -33,5 +33,5 @@ build/
 ### VS Code ###
 .vscode/
 
-# Игнорировать файл с секретами
-application-secret.properties
+# Исключить файл DTD
+configuration_1_3.dtd
