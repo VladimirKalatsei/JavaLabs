@@ -4,21 +4,42 @@ import com.example.lab001.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class UserCache {
-    private final Map<Long, User> cache = new HashMap<>();
+    private final Map<Long, User> userByIdCache = new HashMap<>();
+    private final Map<String, User> userByEmailCache = new HashMap<>();
+    private List<User> allUsersCache;
 
-    public User get(Long id) {
-        return cache.get(id);
+    public User getById(Long id) {
+        return userByIdCache.get(id);
     }
 
-    public void put(Long id, User user) {
-        cache.put(id, user);
+    public User getByEmail(String email) {
+        return userByEmailCache.get(email);
     }
 
-    public void remove(Long id) {
-        cache.remove(id);
+    public List<User> getAllUsers() {
+        return allUsersCache;
+    }
+
+    public void putById(Long id, User user) {
+        userByIdCache.put(id, user);
+    }
+
+    public void putByEmail(String email, User user) {
+        userByEmailCache.put(email, user);
+    }
+
+    public void putAllUsers(List<User> users) {
+        allUsersCache = users;
+    }
+
+    public void clear() {
+        userByIdCache.clear();
+        userByEmailCache.clear();
+        allUsersCache = null;
     }
 }

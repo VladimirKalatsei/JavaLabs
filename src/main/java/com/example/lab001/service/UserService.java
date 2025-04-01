@@ -17,17 +17,38 @@ public class UserService {
     private final UserCache userCache;
 
     public List<User> findAll() {
-        return userRepository.findAll();
+        List<User> cachedUsers = userCache.getAllUsers();
+        if (cachedUsers != null) {
+            return cachedUsers;
+        }
+
+        List<User> users = userRepository.findAll();
+        userCache.putAllUsers(users);
+        return users;
     }
 
     public User findById(Long id) {
-        User cachedUser = userCache.get(id);
+        User cachedUser = userCache.getById(id);
         if (cachedUser != null) {
             return cachedUser;
         }
+
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            userCache.put(id, user);
+            userCache.putById(id, user);
+        }
+        return user;
+    }
+
+    public User findByEmail(String email) {
+        User cachedUser = userCache.getByEmail(email);
+        if (cachedUser != null) {
+            return cachedUser;
+        }
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            userCache.putByEmail(email, user);
         }
         return user;
     }
@@ -38,7 +59,7 @@ public class UserService {
             throw new ResourceAlreadyExistsException("User with email " + user.getEmail() + " already exists");
         }
         User createdUser = userRepository.save(user);
-        userCache.put(createdUser.getId(), createdUser);
+        userCache.clear();
         return createdUser;
     }
 
@@ -46,13 +67,13 @@ public class UserService {
     public User update(Long id, User user) {
         user.setId(id);
         User updatedUser = userRepository.save(user);
-        userCache.put(id, updatedUser);
+        userCache.clear();
         return updatedUser;
     }
 
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
-        userCache.remove(id); // Удаляем из кэша
+        userCache.clear();
     }
 }

@@ -9,17 +9,57 @@ import java.util.Map;
 
 @Component
 public class DetectionHistoryCache {
-    private final Map<String, List<DetectionHistory>> cache = new HashMap<>();
+    private final Map<Long, DetectionHistory> historyByIdCache = new HashMap<>();
+    private final Map<String, List<DetectionHistory>> historiesByUsernameCache = new HashMap<>();
+    private final Map<String, List<DetectionHistory>> historiesByEmailCache = new HashMap<>();
+    private final Map<Long, List<DetectionHistory>> historiesByUserIdCache = new HashMap<>();
+    private List<DetectionHistory> allHistoriesCache;
 
-    public List<DetectionHistory> get(String username) {
-        return cache.get(username);
+    public DetectionHistory getById(Long id) {
+        return historyByIdCache.get(id);
     }
 
-    public void put(String username, List<DetectionHistory> histories) {
-        cache.put(username, histories);
+    public List<DetectionHistory> getByUsername(String username) {
+        return historiesByUsernameCache.get(username);
     }
 
-    public void remove(String username) {
-        cache.remove(username);
+    public List<DetectionHistory> getByEmail(String email) {
+        return historiesByEmailCache.get(email);
+    }
+
+    public List<DetectionHistory> getByUserId(Long userId) {
+        return historiesByUserIdCache.get(userId);
+    }
+
+    public List<DetectionHistory> getAllHistories() {
+        return allHistoriesCache;
+    }
+
+    public void putById(Long id, DetectionHistory history) {
+        historyByIdCache.put(id, history);
+    }
+
+    public void putByUsername(String username, List<DetectionHistory> histories) {
+        historiesByUsernameCache.put(username, histories);
+    }
+
+    public void putByEmail(String email, List<DetectionHistory> histories) {
+        historiesByEmailCache.put(email, histories);
+    }
+
+    public void putByUserId(Long userId, List<DetectionHistory> histories) {
+        historiesByUserIdCache.put(userId, histories);
+    }
+
+    public void putAllHistories(List<DetectionHistory> histories) {
+        allHistoriesCache = histories;
+    }
+
+    public void clear() {
+        historyByIdCache.clear();
+        historiesByUsernameCache.clear();
+        historiesByEmailCache.clear();
+        historiesByUserIdCache.clear();
+        allHistoriesCache = null;
     }
 }
