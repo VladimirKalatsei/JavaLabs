@@ -21,7 +21,6 @@ public class DetectionHistoryDTO {
         this.email = history.getUser().getEmail();
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

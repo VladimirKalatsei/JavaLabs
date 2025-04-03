@@ -28,6 +28,9 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private RequestCounter requestCounter;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -44,6 +47,7 @@ class UserServiceTest {
         assertNotNull(createdUser);
         assertEquals("user1@example.com", createdUser.getEmail());
         verify(userRepository, times(1)).save(user);
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -53,6 +57,7 @@ class UserServiceTest {
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.create(user));
         verify(userRepository, never()).save(any());
+        verify(requestCounter, never()).increment();
     }
 
     @ParameterizedTest
@@ -65,6 +70,7 @@ class UserServiceTest {
 
         assertNotNull(foundUser);
         assertEquals(email, foundUser.getEmail());
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -78,6 +84,7 @@ class UserServiceTest {
         assertEquals(2, users.size());
         assertEquals("user1", users.get(0).getUsername());
         assertEquals("user2", users.get(1).getUsername());
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -92,6 +99,7 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals("updatedUser", result.getUsername());
         verify(userRepository, times(1)).save(updatedUser);
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -101,6 +109,7 @@ class UserServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> userService.update(1L, updatedUser));
         verify(userRepository, never()).save(any());
+        verify(requestCounter, never()).increment();
     }
 
     @Test
@@ -110,6 +119,7 @@ class UserServiceTest {
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.update(1L, updatedUser));
         verify(userRepository, never()).save(any());
+        verify(requestCounter, never()).increment();
     }
 
     @Test
@@ -119,6 +129,7 @@ class UserServiceTest {
         userService.delete(1L);
 
         verify(userRepository, times(1)).deleteById(1L);
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -128,6 +139,7 @@ class UserServiceTest {
         User foundUser = userService.findById(1L);
 
         assertNull(foundUser);
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -139,6 +151,7 @@ class UserServiceTest {
 
         assertNotNull(foundUser);
         assertEquals("user1", foundUser.getUsername());
+        verify(requestCounter, times(1)).increment();
     }
 
     @Test
@@ -148,5 +161,6 @@ class UserServiceTest {
         List<User> users = userService.findAll();
 
         assertTrue(users.isEmpty());
+        verify(requestCounter, times(1)).increment();
     }
 }

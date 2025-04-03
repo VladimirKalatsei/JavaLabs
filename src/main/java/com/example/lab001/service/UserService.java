@@ -4,6 +4,8 @@ import com.example.lab001.model.User;
 import com.example.lab001.repository.UserRepository;
 import com.example.lab001.exception.ResourceAlreadyExistsException;
 import com.example.lab001.cache.CommonCache;
+import com.example.lab001.service.RequestCounter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +20,11 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final CommonCache commonCache;
+    private final RequestCounter requestCounter;
 
-    public List<User> findAll() {
+    public List<User> findAll()
+    {
+        requestCounter.increment();
         List<User> cachedUsers = commonCache.getAllUsers();
         if (cachedUsers != null) {
             return cachedUsers;
@@ -29,7 +34,9 @@ public class UserService {
         return users;
     }
 
-    public User findById(Long id) {
+    public User findById(Long id)
+    {
+        requestCounter.increment();
         User cachedUser = commonCache.getUserById(id);
         if (cachedUser != null) {
             return cachedUser;
@@ -41,11 +48,15 @@ public class UserService {
         return user;
     }
 
-    public List<User> findAllById(Set<Long> ids) {
+    public List<User> findAllById(Set<Long> ids)
+    {
+        requestCounter.increment();
         return userRepository.findAllById(ids);
     }
 
-    public User findByEmail(String email) {
+    public User findByEmail(String email)
+    {
+        requestCounter.increment();
         User cachedUser = commonCache.getUserByEmail(email);
         if (cachedUser != null) {
             return cachedUser;
@@ -58,7 +69,9 @@ public class UserService {
     }
 
     @Transactional
-    public User create(User user) {
+    public User create(User user)
+    {
+        requestCounter.increment();
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ResourceAlreadyExistsException("User with email " + user.getEmail() + " already exists");
         }
@@ -69,8 +82,9 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> createUsersBulk(List<User> users) {
-        // Получаем все email из запроса
+    public List<User> createUsersBulk(List<User> users)
+    {
+        requestCounter.increment();
         List<String> emails = users.stream()
                 .map(User::getEmail)
                 .collect(Collectors.toList());
@@ -96,7 +110,9 @@ public class UserService {
     }
 
     @Transactional
-    public User update(Long id, User user) {
+    public User update(Long id, User user)
+    {
+        requestCounter.increment();
         user.setId(id);
         User updatedUser = userRepository.save(user);
         commonCache.putUser(updatedUser);
@@ -105,7 +121,9 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id)
+    {
+        requestCounter.increment();
         userRepository.deleteById(id);
         commonCache.clearUserCache();
     }
