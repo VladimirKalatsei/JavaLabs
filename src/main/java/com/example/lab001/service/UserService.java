@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,10 @@ public class UserService {
         return user;
     }
 
+    public List<User> findAllById(Set<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
     public User findByEmail(String email) {
         User cachedUser = commonCache.getUserByEmail(email);
         if (cachedUser != null) {
@@ -60,6 +66,33 @@ public class UserService {
         commonCache.putUser(createdUser);
         commonCache.clearUserCache();
         return createdUser;
+    }
+
+    @Transactional
+    public List<User> createUsersBulk(List<User> users) {
+        // Получаем все email из запроса
+        List<String> emails = users.stream()
+                .map(User::getEmail)
+                .collect(Collectors.toList());
+
+        // Проверяем существующие email одним запросом
+        List<String> existingEmails = userRepository.findEmailsExistingIn(emails);
+
+        // Фильтруем и сохраняем только новых пользователей
+        List<User> usersToSave = users.stream()
+                .filter(user -> !existingEmails.contains(user.getEmail()))
+                .peek(user -> {
+                    // Дополнительная проверка на случай race condition
+                    if (userRepository.existsByEmail(user.getEmail())) {
+                        throw new ResourceAlreadyExistsException(
+                                "User with email " + user.getEmail() + " already exists");
+                    }
+                })
+                .collect(Collectors.toList());
+
+        List<User> savedUsers = userRepository.saveAll(usersToSave);
+        commonCache.clearUserCache();
+        return savedUsers;
     }
 
     @Transactional

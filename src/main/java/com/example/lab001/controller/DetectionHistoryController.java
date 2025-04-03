@@ -3,7 +3,9 @@ package com.example.lab001.controller;
 import com.example.lab001.dto.DetectionHistoryDTO;
 import com.example.lab001.model.DetectionHistory;
 import com.example.lab001.service.DetectionHistoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,6 +77,16 @@ public class DetectionHistoryController {
     public ResponseEntity<DetectionHistory> updateDetectionHistory(@PathVariable Long id, @RequestBody DetectionHistory detectionHistory) {
         DetectionHistory updatedHistory = detectionHistoryService.update(id, detectionHistory);
         return ResponseEntity.ok(updatedHistory);
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<DetectionHistoryDTO>> createHistoriesBulk(
+            @Valid @RequestBody List<DetectionHistory> histories) {
+        List<DetectionHistory> createdHistories = detectionHistoryService.createHistoriesBulk(histories);
+        List<DetectionHistoryDTO> dtos = createdHistories.stream()
+                .map(DetectionHistoryDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
     }
 
 }

@@ -35,7 +35,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return (operation, handlerMethod) -> {
             operation.addParametersItem(new io.swagger.v3.oas.models.parameters.Parameter()
                     .name("X-Global-Header")
-                    .description("Глобальный заголовок для всех операций")
+                    .description("Lab 4")
                     .required(false)
                     .in("header")
                     .schema(new io.swagger.v3.oas.models.media.StringSchema()));

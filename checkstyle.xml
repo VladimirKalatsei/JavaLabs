@@ -50,6 +50,6 @@
             <property name="max" value="3"/>
         </module>
 
-        <module name="FinalLocalVariableName"/>
+        <module name="FinalLocalVariable"/>
     </module>
 </module>

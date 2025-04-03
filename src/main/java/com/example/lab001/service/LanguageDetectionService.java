@@ -26,19 +26,13 @@ public class LanguageDetectionService {
         try {
             String response = restTemplate.getForObject(requestUrl, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
-
-            // Парсим ответ как Map для гибкости
             Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
-
-            // Получаем данные детекции (структура может отличаться)
             Map<String, Object> data = (Map<String, Object>) responseMap.get("data");
             if (data != null && data.containsKey("detections")) {
-                // Предполагаем, что detections - это список
                 java.util.List<Map<String, Object>> detections =
                         (java.util.List<Map<String, Object>>) data.get("detections");
 
                 if (!detections.isEmpty()) {
-                    // Возвращаем первый обнаруженный язык
                     return (String) detections.get(0).get("language");
                 }
             }

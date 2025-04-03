@@ -1,6 +1,7 @@
 package com.example.lab001.service;
 
 import com.example.lab001.model.DetectionHistory;
+import com.example.lab001.model.User;
 import com.example.lab001.repository.DetectionHistoryRepository;
 import com.example.lab001.cache.CommonCache;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +81,34 @@ public class DetectionHistoryService {
     }
 
     @Transactional
+    public List<DetectionHistory> createHistoriesBulk(List<DetectionHistory> histories) {
+        // Проверяем существование пользователей
+        Set<Long> userIds = histories.stream()
+                .map(history -> history.getUser().getId())
+                .collect(Collectors.toSet());
+
+        List<User> existingUsers = userService.findAllById(userIds);
+        Set<Long> existingUserIds = existingUsers.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+        List<DetectionHistory> validHistories = histories.stream()
+                .filter(history -> existingUserIds.contains(history.getUser().getId()))
+                .peek(history -> {
+                    User user = existingUsers.stream()
+                            .filter(u -> u.getId().equals(history.getUser().getId()))
+                            .findFirst()
+                            .orElse(null);
+                    history.setUser(user);
+                })
+                .collect(Collectors.toList());
+
+        List<DetectionHistory> savedHistories = detectionHistoryRepository.saveAll(validHistories);
+        commonCache.clearDetectionHistoryCache();
+        return savedHistories;
+    }
+
+    @Transactional
     public DetectionHistory update(Long id, DetectionHistory detectionHistory) {
         detectionHistory.setId(id);
         DetectionHistory updatedHistory = detectionHistoryRepository.save(detectionHistory);
@@ -86,6 +119,6 @@ public class DetectionHistoryService {
     @Transactional
     public void delete(Long id) {
         detectionHistoryRepository.deleteById(id);
-        commonCache.clearDetectionHistoryCache(); // Полная очистка кэша истории
+        commonCache.clearDetectionHistoryCache();
     }
 }
