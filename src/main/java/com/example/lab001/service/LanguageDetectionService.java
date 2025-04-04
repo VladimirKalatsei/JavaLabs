@@ -13,13 +13,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LanguageDetectionService {
     private final DetectionHistoryService detectionHistoryService;
+    private final RequestCounter requestCounter;
 
     @Value("${detectlanguage.api.key}")
     private String apiKey;
 
     private static final String DETECT_LANGUAGE_URL = "https://ws.detectlanguage.com/0.2/detect";
 
-    public String detectLanguage(String text) {
+    public String detectLanguage(String text)
+    {
+        requestCounter.increment();
         RestTemplate restTemplate = new RestTemplate();
         String requestUrl = DETECT_LANGUAGE_URL + "?q=" + text + "&key=" + apiKey;
 
@@ -43,7 +46,9 @@ public class LanguageDetectionService {
         return "Unable to detect language";
     }
 
-    public DetectionHistory saveDetectionHistory(DetectionHistory detectionHistory) {
+    public DetectionHistory saveDetectionHistory(DetectionHistory detectionHistory)
+    {
+        requestCounter.increment();
         return detectionHistoryService.create(detectionHistory);
     }
 }

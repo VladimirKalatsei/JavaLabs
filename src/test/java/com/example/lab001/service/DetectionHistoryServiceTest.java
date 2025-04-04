@@ -43,10 +43,10 @@ class DetectionHistoryServiceTest {
 
     @Test
     void createDetectionHistory_ShouldSaveHistory_WhenValidDataProvided() {
-        DetectionHistory history = new DetectionHistory();
-        history.setText("Test text");
-        history.setDetectedLanguage("en");
-        history.setUser(new User(1L, "username", "user@example.com", null));
+        DetectionHistory history = mock(DetectionHistory.class);
+        when(history.getText()).thenReturn("Test text");
+        when(history.getDetectedLanguage()).thenReturn("en");
+        when(history.getUser()).thenReturn(new User(1L, "username", "user@example.com", null));
 
         when(detectionHistoryRepository.save(any(DetectionHistory.class))).thenReturn(history);
 
@@ -60,7 +60,7 @@ class DetectionHistoryServiceTest {
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L})
     void findById_ShouldReturnHistory_WhenExists(Long id) {
-        DetectionHistory history = new DetectionHistory();
+        DetectionHistory history = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findById(id)).thenReturn(Optional.of(history));
 
         DetectionHistory foundHistory = detectionHistoryService.findById(id);
@@ -77,8 +77,8 @@ class DetectionHistoryServiceTest {
 
     @Test
     void findAll_ShouldReturnListOfHistories() {
-        DetectionHistory history1 = new DetectionHistory();
-        DetectionHistory history2 = new DetectionHistory();
+        DetectionHistory history1 = mock(DetectionHistory.class);
+        DetectionHistory history2 = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findAll()).thenReturn(Arrays.asList(history1, history2));
 
         List<DetectionHistory> histories = detectionHistoryService.findAll();
@@ -88,7 +88,7 @@ class DetectionHistoryServiceTest {
 
     @Test
     void findByUserId_ShouldReturnHistories_WhenExists() {
-        DetectionHistory history = new DetectionHistory();
+        DetectionHistory history = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findByUserId(1L)).thenReturn(Arrays.asList(history));
 
         List<DetectionHistory> histories = detectionHistoryService.findByUserId(1L);
@@ -116,12 +116,12 @@ class DetectionHistoryServiceTest {
 
     @Test
     void updateDetectionHistory_ShouldReturnUpdatedHistory() {
-        DetectionHistory existingHistory = new DetectionHistory();
-        existingHistory.setId(1L);
-        existingHistory.setText("Old text");
+        DetectionHistory existingHistory = mock(DetectionHistory.class);
+        when(existingHistory.getId()).thenReturn(1L);
+        when(existingHistory.getText()).thenReturn("Old text");
 
-        DetectionHistory updatedHistory = new DetectionHistory();
-        updatedHistory.setText("Updated text");
+        DetectionHistory updatedHistory = mock(DetectionHistory.class);
+        when(updatedHistory.getText()).thenReturn("Updated text");
 
         when(detectionHistoryRepository.findById(1L)).thenReturn(Optional.of(existingHistory));
         when(detectionHistoryRepository.save(any(DetectionHistory.class))).thenReturn(updatedHistory);
@@ -134,8 +134,8 @@ class DetectionHistoryServiceTest {
 
     @Test
     void findByEmail_ShouldReturnHistories_WhenExists() {
-        DetectionHistory history = new DetectionHistory();
-        history.setUser(new User(1L, "username", "user@example.com", null));
+        DetectionHistory history = mock(DetectionHistory.class);
+        when(history.getUser()).thenReturn(new User(1L, "username", "user@example.com", null));
         when(detectionHistoryRepository.findByEmail("user@example.com")).thenReturn(Arrays.asList(history));
 
         List<DetectionHistory> histories = detectionHistoryService.findByEmail("user@example.com");

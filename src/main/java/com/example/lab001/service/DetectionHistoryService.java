@@ -20,8 +20,11 @@ public class DetectionHistoryService {
     private final DetectionHistoryRepository detectionHistoryRepository;
     private final CommonCache commonCache;
     private final UserService userService;
+    private final RequestCounter requestCounter;
 
-    public List<DetectionHistory> findAll() {
+    public List<DetectionHistory> findAll()
+    {
+        requestCounter.increment();
         List<DetectionHistory> cachedHistories = commonCache.getAllDetectionHistories();
         if (cachedHistories != null) {
             return cachedHistories;
@@ -31,7 +34,9 @@ public class DetectionHistoryService {
         return histories;
     }
 
-    public DetectionHistory findById(Long id) {
+    public DetectionHistory findById(Long id)
+    {
+        requestCounter.increment();
         DetectionHistory cachedHistory = commonCache.getDetectionHistoryById(id);
         if (cachedHistory != null) {
             return cachedHistory;
@@ -43,7 +48,9 @@ public class DetectionHistoryService {
         return history;
     }
 
-    public List<DetectionHistory> findByUserId(Long userId) {
+    public List<DetectionHistory> findByUserId(Long userId)
+    {
+        requestCounter.increment();
         List<DetectionHistory> cachedHistories = commonCache.getDetectionHistoriesByUserId(userId);
         if (cachedHistories != null) {
             return cachedHistories;
@@ -53,7 +60,9 @@ public class DetectionHistoryService {
         return histories;
     }
 
-    public List<DetectionHistory> findByEmail(String email) {
+    public List<DetectionHistory> findByEmail(String email)
+    {
+        requestCounter.increment();
         List<DetectionHistory> cachedHistories = commonCache.getDetectionHistoriesByEmail(email);
         if (cachedHistories != null) {
             return cachedHistories;
@@ -63,7 +72,9 @@ public class DetectionHistoryService {
         return histories;
     }
 
-    public List<DetectionHistory> findByUsername(String username) {
+    public List<DetectionHistory> findByUsername(String username)
+    {
+        requestCounter.increment();
         List<DetectionHistory> cachedHistories = commonCache.getDetectionHistoriesByUsername(username);
         if (cachedHistories != null) {
             return cachedHistories;
@@ -74,15 +85,18 @@ public class DetectionHistoryService {
     }
 
     @Transactional
-    public DetectionHistory create(DetectionHistory detectionHistory) {
+    public DetectionHistory create(DetectionHistory detectionHistory)
+    {
+        requestCounter.increment();
         DetectionHistory createdHistory = detectionHistoryRepository.save(detectionHistory);
         commonCache.clearDetectionHistoryCache();
         return createdHistory;
     }
 
     @Transactional
-    public List<DetectionHistory> createHistoriesBulk(List<DetectionHistory> histories) {
-        // Проверяем существование пользователей
+    public List<DetectionHistory> createHistoriesBulk(List<DetectionHistory> histories)
+    {
+        requestCounter.increment();
         Set<Long> userIds = histories.stream()
                 .map(history -> history.getUser().getId())
                 .collect(Collectors.toSet());
@@ -109,7 +123,9 @@ public class DetectionHistoryService {
     }
 
     @Transactional
-    public DetectionHistory update(Long id, DetectionHistory detectionHistory) {
+    public DetectionHistory update(Long id, DetectionHistory detectionHistory)
+    {
+        requestCounter.increment();
         detectionHistory.setId(id);
         DetectionHistory updatedHistory = detectionHistoryRepository.save(detectionHistory);
         commonCache.clearDetectionHistoryCache();
@@ -117,7 +133,9 @@ public class DetectionHistoryService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id)
+    {
+        requestCounter.increment();
         detectionHistoryRepository.deleteById(id);
         commonCache.clearDetectionHistoryCache();
     }

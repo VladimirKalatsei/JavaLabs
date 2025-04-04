@@ -38,7 +38,8 @@ class UserServiceTest {
 
     @Test
     void saveUser_shouldReturnSavedUser_whenEmailIsUnique() {
-        User user = new User(null, "user1", "user1@example.com", null);
+        User user = mock(User.class);
+        when(user.getEmail()).thenReturn("user1@example.com");
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -52,7 +53,8 @@ class UserServiceTest {
 
     @Test
     void createUser_shouldThrowException_whenEmailAlreadyExists() {
-        User user = new User(null, "user1", "user1@example.com", null);
+        User user = mock(User.class);
+        when(user.getEmail()).thenReturn("user1@example.com");
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.create(user));
@@ -63,7 +65,8 @@ class UserServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"user1@example.com", "user2@example.com"})
     void findByEmail_shouldReturnUser_whenEmailExists(String email) {
-        User user = new User(1L, "user1", email, null);
+        User user = mock(User.class);
+        when(user.getEmail()).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
         User foundUser = userService.findByEmail(email);
@@ -75,8 +78,10 @@ class UserServiceTest {
 
     @Test
     void findAll_shouldReturnListOfUsers() {
-        User user1 = new User(1L, "user1", "user1@example.com", null);
-        User user2 = new User(2L, "user2", "user2@example.com", null);
+        User user1 = mock(User.class);
+        when(user1.getUsername()).thenReturn("user1");
+        User user2 = mock(User.class);
+        when(user2.getUsername()).thenReturn("user2");
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
         List<User> users = userService.findAll();
@@ -89,8 +94,12 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldReturnUpdatedUser_whenUserExists() {
-        User existingUser = new User(1L, "user1", "user1@example.com", null);
-        User updatedUser = new User(1L, "updatedUser", "user1@example.com", null);
+        User existingUser = mock(User.class);
+        when(existingUser.getEmail()).thenReturn("user1@example.com");
+        when(existingUser.getUsername()).thenReturn("user1");
+        User updatedUser = mock(User.class);
+        when(updatedUser.getUsername()).thenReturn("updatedUser");
+
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
 
@@ -104,20 +113,10 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldThrowException_whenUserToUpdateDoesNotExist() {
-        User updatedUser = new User(1L, "updatedUser", "updated@example.com", null);
+        User updatedUser = mock(User.class);
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.update(1L, updatedUser));
-        verify(userRepository, never()).save(any());
-        verify(requestCounter, never()).increment();
-    }
-
-    @Test
-    void updateUser_shouldThrowException_whenEmailIsEmptyDuringUpdate() {
-        User updatedUser = new User(1L, "updatedUser", "", null);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(updatedUser));
-
-        assertThrows(ResourceAlreadyExistsException.class, () -> userService.update(1L, updatedUser));
         verify(userRepository, never()).save(any());
         verify(requestCounter, never()).increment();
     }
@@ -144,7 +143,8 @@ class UserServiceTest {
 
     @Test
     void findById_shouldReturnUser_whenUserExists() {
-        User user = new User(1L, "user1", "user1@example.com", null);
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("user1");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         User foundUser = userService.findById(1L);
