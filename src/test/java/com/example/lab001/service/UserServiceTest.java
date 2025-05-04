@@ -1,3 +1,4 @@
+
 package com.example.lab001.service;
 
 import com.example.lab001.exception.ResourceAlreadyExistsException;
@@ -37,7 +38,7 @@ class UserServiceTest {
     }
 
     @Test
-    void saveUser_shouldReturnSavedUser_whenEmailIsUnique() {
+    void shouldReturnSavedUserWhenEmailIsUnique() {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("user1@example.com");
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
@@ -52,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_shouldThrowException_whenEmailAlreadyExists() {
+    void shouldThrowExceptionWhenEmailAlreadyExists() {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("user1@example.com");
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
@@ -64,7 +65,7 @@ class UserServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"user1@example.com", "user2@example.com"})
-    void findByEmail_shouldReturnUser_whenEmailExists(String email) {
+    void shouldReturnUserWhenEmailExists(String email) {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
@@ -77,7 +78,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findAll_shouldReturnListOfUsers() {
+    void shouldReturnListOfUsersWhenFindAll() {
         User user1 = mock(User.class);
         when(user1.getUsername()).thenReturn("user1");
         User user2 = mock(User.class);
@@ -93,7 +94,7 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUser_shouldReturnUpdatedUser_whenUserExists() {
+    void shouldReturnUpdatedUserWhenUserExists() {
         User existingUser = mock(User.class);
         when(existingUser.getEmail()).thenReturn("user1@example.com");
         when(existingUser.getUsername()).thenReturn("user1");
@@ -112,7 +113,7 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUser_shouldThrowException_whenUserToUpdateDoesNotExist() {
+    void shouldThrowExceptionWhenUserToUpdateDoesNotExist() {
         User updatedUser = mock(User.class);
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -122,7 +123,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUser_shouldInvokeDeleteById() {
+    void shouldInvokeDeleteWhenDeletingUser() {
         doNothing().when(userRepository).deleteById(1L);
 
         userService.delete(1L);
@@ -132,7 +133,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findById_shouldReturnNull_whenUserDoesNotExist() {
+    void shouldReturnNullWhenUserDoesNotExist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         User foundUser = userService.findById(1L);
@@ -142,7 +143,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findById_shouldReturnUser_whenUserExists() {
+    void shouldReturnUserWhenUserExists() {
         User user = mock(User.class);
         when(user.getUsername()).thenReturn("user1");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -155,7 +156,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findAll_shouldReturnEmptyList_whenNoUsersExist() {
+    void shouldReturnEmptyListWhenNoUsersExist() {
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<User> users = userService.findAll();

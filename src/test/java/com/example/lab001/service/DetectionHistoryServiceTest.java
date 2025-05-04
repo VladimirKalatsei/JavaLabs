@@ -1,3 +1,4 @@
+
 package com.example.lab001.service;
 
 import com.example.lab001.exception.ResourceNotFoundException;
@@ -42,7 +43,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void createDetectionHistory_ShouldSaveHistory_WhenValidDataProvided() {
+    void shouldSaveHistoryWhenValidDataProvided() {
         DetectionHistory history = mock(DetectionHistory.class);
         when(history.getText()).thenReturn("Test text");
         when(history.getDetectedLanguage()).thenReturn("en");
@@ -59,7 +60,7 @@ class DetectionHistoryServiceTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L})
-    void findById_ShouldReturnHistory_WhenExists(Long id) {
+    void shouldReturnHistoryWhenExists(Long id) {
         DetectionHistory history = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findById(id)).thenReturn(Optional.of(history));
 
@@ -69,14 +70,14 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void findById_ShouldThrowException_WhenNotExists() {
+    void shouldThrowExceptionWhenHistoryNotExists() {
         when(detectionHistoryRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> detectionHistoryService.findById(1L));
     }
 
     @Test
-    void findAll_ShouldReturnListOfHistories() {
+    void shouldReturnListOfHistoriesWhenFindAll() {
         DetectionHistory history1 = mock(DetectionHistory.class);
         DetectionHistory history2 = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findAll()).thenReturn(Arrays.asList(history1, history2));
@@ -87,7 +88,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void findByUserId_ShouldReturnHistories_WhenExists() {
+    void shouldReturnHistoriesWhenFindByUserId() {
         DetectionHistory history = mock(DetectionHistory.class);
         when(detectionHistoryRepository.findByUserId(1L)).thenReturn(Arrays.asList(history));
 
@@ -97,7 +98,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void findByUserId_ShouldReturnEmptyList_WhenNoHistoriesFound() {
+    void shouldReturnEmptyListWhenNoHistoriesFoundForUser() {
         when(detectionHistoryRepository.findByUserId(1L)).thenReturn(Collections.emptyList());
 
         List<DetectionHistory> histories = detectionHistoryService.findByUserId(1L);
@@ -106,7 +107,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void deleteDetectionHistory_ShouldInvokeDeleteById() {
+    void shouldInvokeDeleteWhenDeletingHistory() {
         doNothing().when(detectionHistoryRepository).deleteById(1L);
 
         detectionHistoryService.delete(1L);
@@ -115,7 +116,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void updateDetectionHistory_ShouldReturnUpdatedHistory() {
+    void shouldReturnUpdatedHistoryWhenUpdateExists() {
         DetectionHistory existingHistory = mock(DetectionHistory.class);
         when(existingHistory.getId()).thenReturn(1L);
         when(existingHistory.getText()).thenReturn("Old text");
@@ -133,7 +134,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void findByEmail_ShouldReturnHistories_WhenExists() {
+    void shouldReturnHistoriesWhenFindByEmail() {
         DetectionHistory history = mock(DetectionHistory.class);
         when(history.getUser()).thenReturn(new User(1L, "username", "user@example.com", null));
         when(detectionHistoryRepository.findByEmail("user@example.com")).thenReturn(Arrays.asList(history));
@@ -144,7 +145,7 @@ class DetectionHistoryServiceTest {
     }
 
     @Test
-    void findByEmail_ShouldReturnEmptyList_WhenNoHistoriesFound() {
+    void shouldReturnEmptyListWhenNoHistoriesFoundForEmail() {
         when(detectionHistoryRepository.findByEmail("user@example.com")).thenReturn(Collections.emptyList());
 
         List<DetectionHistory> histories = detectionHistoryService.findByEmail("user@example.com");
